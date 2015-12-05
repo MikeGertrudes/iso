@@ -88,8 +88,12 @@ Iso.prototype.buildTheWorld = function buildTheWorld() {
 
   var that = this;
 
-  this.world.forEach(function() {
+  this.world.forEach(function(tile) {
     var element = that.buildElement();
+
+    tile.element = element;
+
+    element.innerHTML = tile[0] + tile[1];
 
     this.appendChild(element);
   }, fragment);
@@ -102,8 +106,10 @@ Iso.prototype.buildTheInputs = function buildTheInputs() {
 
   var that = this;
 
-  this.input.forEach(function(input) {
+  this.input.forEach(function(value, key) {
     var element = that.buildElement();
+
+    element.style.backgroundColor = value.backgroundColor;
 
     this.appendChild(element);
   }, fragment);
