@@ -144,13 +144,20 @@ var Iso = (function() {
         element.addEventListener('click', function() {
           if (!tileValue.active) {
             element.style.backgroundColor = 'yellow';
+
             tileValue.active = true;
+            tileValue.backgroundColor = 'yellow';
+
+            that.saveInput(tileValue, tileKey);
           } else {
             element.style.backgroundColor = DEFAULTS.backgroundColor;
+
             tileValue.active = false;
+            tileValue.backgroundColor = DEFAULTS.backgroundColor;
+
+            that.removeInput(tileValue, tileKey);
           }
 
-          that.saveInput(tileValue, tileKey);
         });
 
         fragment.appendChild(element);
@@ -165,10 +172,15 @@ var Iso = (function() {
       let that = this;
 
       this.input.forEach(function(value, key) {
-        let element = that.world.get(key).element;
+        let tile = that.world.get(key);
+
+        tile.active = value.active;
+
+        tile.backgroundColor = value.backgroundColor;
+
+        let element = tile.element;
 
         element.style.backgroundColor = value.backgroundColor;
-
       }, this.input);
     }
 
@@ -177,6 +189,12 @@ var Iso = (function() {
         active: true,
         backgroundColor: 'yellow'
       });
+
+      sessionStorage.setItem('input', JSON.stringify(Array.from(this.input.entries())));
+    }
+
+    removeInput(tileValue, tileKey) {
+      this.input.delete(tileKey);
 
       sessionStorage.setItem('input', JSON.stringify(Array.from(this.input.entries())));
     }
@@ -205,6 +223,12 @@ var Iso = (function() {
       element.style.backgroundColor = '#cccccc';
 
       element.style.display = 'inline-block';
+
+      element.style.boxSizing = 'border-box';
+
+      // element.style.border = '1px solid #e6e6e6';
+
+      // element.style.color = '#e6e6e6';
 
       return element;
     }
