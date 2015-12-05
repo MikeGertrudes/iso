@@ -7,8 +7,10 @@
     </style>
   </head>
   <body>
-    <script type="text/javascript" src="index.js"></script>
+    <script type="text/javascript" src="Iso.js"></script>
     <script type="text/javascript">
+    'use strict';
+
     var test = new Iso({
       divisions: 20
     });
@@ -16,6 +18,8 @@
     test.resetTheWorld();
 
     test.buildTheWorld();
+
+    test.applyInputs();
     </script>
   </body>
 </html>
