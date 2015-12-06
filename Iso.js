@@ -87,6 +87,83 @@ var Iso = (function() {
     ])
   };
 
+  const characterMap = new Map([
+    ['0', [
+      [true, true, true],
+      [true, false, true],
+      [true, false, true],
+      [true, false, true],
+      [true, true, true] 
+    ]],
+    ['1', [
+      [true, true, false],
+      [false, true, false],
+      [false, true, false],
+      [false, true, false],
+      [true, true, true] 
+    ]],
+    ['2', [
+      [true, true, true],
+      [false, false, true],
+      [true, true, true],
+      [true, false, false],
+      [true, true, true],
+    ]],
+    ['3', [
+      [true, true, true],
+      [false, false, true],
+      [false, true, true],
+      [false, false, true],
+      [true, true, true],
+    ]],
+    ['4', [
+      [true, false, true],
+      [true, false, true],
+      [true, true, true],
+      [false, false, true],
+      [false, false, true],
+    ]],
+    ['5', [
+      [true, true, true],
+      [true, false, false],
+      [true, true, true],
+      [false, false, true],
+      [true, true, true],
+    ]],
+    ['6', [
+      [true, true, true],
+      [true, false, false],
+      [true, true, true],
+      [true, false, true],
+      [true, true, true],
+    ]],
+    ['7', [
+      [true, true, true],
+      [false, false, true],
+      [false, false, true],
+      [false, true, false],
+      [false, true, false],
+    ]],
+    ['8', [
+      [true, true, true],
+      [true, false, true],
+      [true, true, true],
+      [true, false, true],
+      [true, true, true] 
+    ]],
+    ['9', [
+      [true, true, true],
+      [true, false, true],
+      [true, true, true],
+      [false, false, true],
+      [true, true, true] 
+    ]]
+  ]);
+
+  const alphabet = [
+    'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
+  ];
+
   class Iso {
 
     constructor(config) {
@@ -94,9 +171,6 @@ var Iso = (function() {
 
       this.divisions = config.divisions || 10;
 
-      const alphabet = [
-        'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'
-      ];
 
       this.world = new Map();
 
@@ -113,14 +187,7 @@ var Iso = (function() {
         }
       }
 
-      this.input = this.loadInput() || DEFAULTS.input;
-
-      // next steps:
-      // conditional apply #333333
-      // find a way to map the input coordinates to the world map
-      // can we use Map or WeakMap to hold a hard reference to the world object?
-      // is that worth it? the Map will only be referencing the world, and we will never destroy the world
-      // build the world one function
+      this.input = this.stringToInputMap() || this.loadInput() || DEFAULTS.input;
     }
 
     resetTheWorld() {
@@ -235,6 +302,45 @@ var Iso = (function() {
 
     addElement(element) {
       document.body.appendChild(element);
+    }
+
+    stringToInputMap(string) {
+      string = string || '12:00';
+
+      const characterSpacing = 1;
+
+      let startingColumnIndex = 1;
+
+      let currentCharacterStartingColumn = startingColumnIndex;
+
+      let input = new Map();
+
+      string.split('').forEach((character, characterIndex) => {
+        const currentCharacter = characterMap.get(character);
+
+        if (currentCharacter) {
+          const currentCharacterHeight = currentCharacter.length;
+
+          currentCharacter.forEach((row, rowIndex) => {
+            let inputRow = alphabet[rowIndex];
+
+            row.forEach((isActive, columnIndex) => {
+              if (isActive) {
+                input.set(alphabet[currentCharacterStartingColumn + columnIndex] + inputRow, {
+                  active: true,
+                  backgroundColor: 'green'
+                })
+              }
+            });
+
+            if (rowIndex === currentCharacterHeight - 1) {
+              currentCharacterStartingColumn = currentCharacterStartingColumn + row.length + characterSpacing;
+            }
+          });
+        }
+      });
+
+      return input;
     }
 
   }
