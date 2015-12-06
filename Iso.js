@@ -157,6 +157,13 @@ var Iso = (function() {
       [true, true, true],
       [false, false, true],
       [true, true, true] 
+    ]],
+    [':', [
+      [false],
+      [true],
+      [false],
+      [true],
+      [false]
     ]]
   ]);
 
@@ -187,7 +194,48 @@ var Iso = (function() {
         }
       }
 
-      this.input = this.stringToInputMap() || this.loadInput() || DEFAULTS.input;
+      const time = new Date();
+
+      const currentTime = getTimeUnitWithLeadingZeroes(time.getHours()) + ':' + getTimeUnitWithLeadingZeroes(time.getMinutes());
+
+      let cachedTime = currentTime;
+
+      this.input = this.stringToInputMap(currentTime) || this.loadInput() || DEFAULTS.input;
+
+      // TODO: set the time initially, and determine
+      // how many seconds are left until the minute changes
+      // then change the time then, and kick off this setInterval
+      // for every minute from them on
+      // TODO: iso grid, how we will do this? CSS?
+      // TODO: more efficient reset- why reset everything?
+      const timer = setInterval(() => {
+        const time = new Date();
+
+        const currentTime = getTimeUnitWithLeadingZeroes(time.getHours()) + ':' + getTimeUnitWithLeadingZeroes(time.getMinutes());
+
+        if (currentTime !== cachedTime) {
+          this.input = this.stringToInputMap(currentTime);
+
+          test.resetTheWorld();
+
+          test.buildTheWorld();
+
+          this.applyInputs();
+
+          cachedTime = currentTime;
+        }
+
+      }, 1000);
+
+      function getTimeUnitWithLeadingZeroes(unit) {
+        unit = unit || '00';
+
+        if (unit < 10) {
+          unit = '0' + unit;
+        }
+
+        return unit;
+      }
     }
 
     resetTheWorld() {
@@ -305,11 +353,13 @@ var Iso = (function() {
     }
 
     stringToInputMap(string) {
-      string = string || '12:00';
+      string = string ||  '00:00';
 
       const characterSpacing = 1;
 
       let startingColumnIndex = 1;
+
+      let startingRowIndex = 1;
 
       let currentCharacterStartingColumn = startingColumnIndex;
 
@@ -322,13 +372,13 @@ var Iso = (function() {
           const currentCharacterHeight = currentCharacter.length;
 
           currentCharacter.forEach((row, rowIndex) => {
-            let inputRow = alphabet[rowIndex];
+            let inputRow = alphabet[startingRowIndex + rowIndex];
 
             row.forEach((isActive, columnIndex) => {
               if (isActive) {
                 input.set(alphabet[currentCharacterStartingColumn + columnIndex] + inputRow, {
                   active: true,
-                  backgroundColor: 'green'
+                  backgroundColor: 'yellow'
                 })
               }
             });
