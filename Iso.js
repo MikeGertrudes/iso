@@ -4,7 +4,8 @@ var Iso = (function() {
 
   const DEFAULTS = {
     active: false,
-    backgroundColor: '#CCCCCC',
+    activeBackgroundColor: '#333333',
+    inactiveBackgroundColor: '#FFFFFF',
     input: new Map([
       [
         'BB', {
@@ -178,7 +179,6 @@ var Iso = (function() {
 
       this.divisions = config.divisions || 10;
 
-
       this.world = new Map();
 
       let row;
@@ -254,21 +254,21 @@ var Iso = (function() {
 
         tileValue.element = element;
 
-        element.innerHTML = tileKey;
+        //element.innerHTML = tileKey;
 
         element.addEventListener('click', function() {
           if (!tileValue.active) {
-            element.style.backgroundColor = 'yellow';
+            element.style.backgroundColor = DEFAULTS.activeBackgroundColor;
 
             tileValue.active = true;
-            tileValue.backgroundColor = 'yellow';
+            tileValue.backgroundColor = DEFAULTS.activeBackgroundColor;
 
             that.saveInput(tileValue, tileKey);
           } else {
-            element.style.backgroundColor = DEFAULTS.backgroundColor;
+            element.style.backgroundColor = DEFAULTS.inactiveBackgroundColor;
 
             tileValue.active = false;
-            tileValue.backgroundColor = DEFAULTS.backgroundColor;
+            tileValue.backgroundColor = DEFAULTS.inactiveBackgroundColor;
 
             that.removeInput(tileValue, tileKey);
           }
@@ -302,7 +302,7 @@ var Iso = (function() {
     saveInput(tileValue, tileKey) {
       this.input.set(tileKey, {
         active: true,
-        backgroundColor: 'yellow'
+        backgroundColor: DEFAULTS.activeBackgroundColor
       });
 
       sessionStorage.setItem('input', JSON.stringify(Array.from(this.input.entries())));
@@ -335,7 +335,7 @@ var Iso = (function() {
 
       element.style.height = element.style.width;
 
-      element.style.backgroundColor = '#cccccc';
+      element.style.backgroundColor = DEFAULTS.inactiveBackgroundColor;
 
       element.style.display = 'inline-block';
 
@@ -378,7 +378,7 @@ var Iso = (function() {
               if (isActive) {
                 input.set(alphabet[currentCharacterStartingColumn + columnIndex] + inputRow, {
                   active: true,
-                  backgroundColor: 'yellow'
+                  backgroundColor: DEFAULTS.activeBackgroundColor
                 })
               }
             });
